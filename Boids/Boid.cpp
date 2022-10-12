@@ -1,14 +1,19 @@
 #include "Boid.h"
 
 
-#define NEARBY_DISTANCE		100.0f	// how far boids can see
+#define NEARBY_DISTANCE			100.0f	// how far boids can see
+
+#define SEPERATION_MULTIPLIER	0.02f
+#define ALIGNMENT_MULTPLIER		0.1f
+#define COHESION_MULTIPLIER		0.01f
+#define VELOCITY_MULTIPLIER		0.05f
 
 Boid::Boid(XMFLOAT3 position)
 {
 	m_position = position;
 	createRandomDirection();
 
-	m_speed = 100;
+	m_speed = 200;
 }
 
 Boid::~Boid()
@@ -46,13 +51,16 @@ void Boid::update(float t, vecBoid* boidList)
 	XMFLOAT3 vVelocity = XMFLOAT3(0, 0, 0);
 
 	if(magnitudeFloat3(vSeparation) > 0.0f)
-		vVelocity = addFloat3(vSeparation, vVelocity);
+		//vVelocity = addFloat3(vSeparation, vVelocity);
+		vVelocity = addWeightedFloat3(vCohesion, SEPERATION_MULTIPLIER);
 
 	if (magnitudeFloat3(vAlignment) > 0.0f)
-		vVelocity = addFloat3(vAlignment, vVelocity);
+		//vVelocity = addFloat3(vAlignment, vVelocity);
+		vVelocity = addWeightedFloat3(vCohesion, ALIGNMENT_MULTPLIER);
 
 	if (magnitudeFloat3(vCohesion) > 0.0f)
-		vVelocity = addFloat3(vCohesion, vVelocity);
+		//vVelocity = addFloat3(vCohesion, vVelocity);
+		vVelocity = addWeightedFloat3(vCohesion, COHESION_MULTIPLIER);
 
 	
 	if (magnitudeFloat3(vVelocity) != 0.0f)
@@ -60,16 +68,23 @@ void Boid::update(float t, vecBoid* boidList)
 		vVelocity = normaliseFloat3(vVelocity);
 
 		
-		multiplyFloat3(vVelocity, 0.1);
-		m_direction = addFloat3(m_direction, vVelocity);
-		m_direction = normaliseFloat3(m_direction);
-		
+		//multiplyFloat3(vVelocity, 0.1);
+		//m_direction = addFloat3(m_direction, vVelocity);
+		//m_direction = normaliseFloat3(m_direction);
+
+		m_direction = addWeightedFloat3(vVelocity, VELOCITY_MULTIPLIER);
 	}
 	
 	XMFLOAT3 vDirection = multiplyFloat3(m_direction, t * m_speed);
 	m_position = addFloat3(m_position, vDirection);
 
 	DrawableGameObject::update(t);
+}
+
+XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& source, const float multiplier)
+{
+	XMFLOAT3 vWeighted = multiplyFloat3(source, 0.1);
+	return normaliseFloat3(vWeighted);
 }
 
 XMFLOAT3 Boid::calculateSeparationVector(vecBoid* boidList)

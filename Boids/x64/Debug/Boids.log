@@ -1,5 +1,6 @@
 ﻿  Boid.cpp
-C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\Boid.cpp(121,54): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
-C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\Boid.cpp(137,46): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
-C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\Boid.cpp(194,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-  Boids.vcxproj -> C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\x64\Debug\Boids.exe
+D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\Boid.cpp(84,64): warning C4100: 'multiplier': unreferenced formal parameter
+D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\Boid.cpp(136,54): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
+D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\Boid.cpp(152,46): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
+D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\Boid.cpp(209,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  Boids.vcxproj -> D:\Documents\GitHub\BlackRece\CppFlockingDemo\x64\Debug\Boids.exe

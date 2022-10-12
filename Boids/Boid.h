@@ -11,6 +11,9 @@ public:
 	void								checkIsOnScreenAndFix(const XMMATRIX&  view, const XMMATRIX&  proj);
 	void								update(float t, vecBoid* drawList);
 
+	XMFLOAT3 addWeightedFloat3(XMFLOAT3& source, XMFLOAT3& desired, const float multiplier);
+
+
 protected:
 	void								setDirection(XMFLOAT3 direction);
 
@@ -28,6 +31,7 @@ protected:
 	XMFLOAT3							multiplyFloat3(XMFLOAT3& f1, const float scalar);
 	XMFLOAT3							divideFloat3(XMFLOAT3& f1, const float scalar);
 
+	XMFLOAT3							addWeightedFloat3(XMFLOAT3& source, const float multiplier);
 	XMFLOAT3							nearbyBoidsAveragePosition(vecBoid* boidList);
 
 	XMFLOAT3							m_direction;
