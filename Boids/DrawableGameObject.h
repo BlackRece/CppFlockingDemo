@@ -46,6 +46,7 @@ public:
 	void								setPosition(XMFLOAT3 position);
 	XMFLOAT3*							getPosition() { return &m_position; }
 	
+	void								setScale(const float scale);
 
 
 
@@ -58,7 +59,7 @@ public:
 	ID3D11SamplerState *				m_pSamplerLinear;
 	MaterialPropertiesConstantBuffer	m_material;
 	XMFLOAT3							m_position;
-
+	float								m_scale;
 
 	
 };

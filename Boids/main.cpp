@@ -14,6 +14,12 @@
 //--------------------------------------------------------------------------------------
 #define _XM_NO_INTRINSICS_
 
+#define SEPERATION_MULTIPLIER	0.02f
+#define ALIGNMENT_MULTPLIER		0.1f
+#define COHESION_MULTIPLIER		0.01f
+
+#define VELOCITY_MULTIPLIER		0.01f
+
 #include "main.h"
 
 #include <time.h>
@@ -79,8 +85,13 @@ vecBoid					g_Boids;
 
 constexpr auto          g_PI = 3.14159265358979323846;
 
+static float            f_seperation;
+static float            f_alignment;
+static float            f_cohesion;
+static float            f_velocity;
 
-Boid* createFish(XMFLOAT3 position)
+
+Boid* createFish(XMFLOAT3 position, bool shark)
 {
     HRESULT hr;
 
@@ -89,6 +100,9 @@ Boid* createFish(XMFLOAT3 position)
     if (FAILED(hr))
         return fish;
     fish->setPosition(position);
+    fish->setScale(1.0f);
+    if (shark)
+        fish->setScale(3.0f);
     g_Boids.push_back(fish);
     return fish;
 }
@@ -102,7 +116,10 @@ void squareFormation(int amount)
         for (int y = 0; y < amount; y++)
         {
             position = XMFLOAT3(x * amount, y * amount, 0);
-            Boid* fish = createFish(position);
+			if (x == 0 && y == 0)
+                Boid* fish = createFish(position, true);
+            else
+				Boid* fish = createFish(position, false);
         }
     }
 }
@@ -118,7 +135,10 @@ void circleFormation(int radius, int amount)
         tmpX = radius * cos(angle * g_PI);
         tmpY = radius * sin(angle * g_PI);
     
-        Boid* fish = createFish(XMFLOAT3(tmpX, tmpY, 0));
+		if(point == 0)
+            Boid* fish = createFish(XMFLOAT3(tmpX, tmpY, 0), true);
+        else
+            Boid* fish = createFish(XMFLOAT3(tmpX, tmpY, 0), false);
     }
 }
 
@@ -136,7 +156,7 @@ void spiralFormation(int coils, int radius, int rotation)
     int centerX, centerY;
     centerX = centerY = 0;
     
-    Boid* midFish = createFish(XMFLOAT3(centerX, centerY, 0));
+    Boid* midFish = createFish(XMFLOAT3(centerX, centerY, 0), true);
 
     // For every side, step around and away from center.
     // start at the angle corresponding to a distance of chord
@@ -154,7 +174,7 @@ void spiralFormation(int coils, int radius, int rotation)
         double y = centerY + sin(around) * away;
         //
         // Now that you know it, do it.
-        Boid* fish = createFish(XMFLOAT3(x, y, 0));
+        Boid* fish = createFish(XMFLOAT3(x, y, 0), false);
 
         // to a first approximation, the points are on a circle
         // so the angle between them is chord/radius
@@ -164,12 +184,18 @@ void spiralFormation(int coils, int radius, int rotation)
 
 void placeFish()
 {
+    f_seperation = SEPERATION_MULTIPLIER;
+    f_alignment = ALIGNMENT_MULTPLIER;
+    f_cohesion = COHESION_MULTIPLIER;
+
+    f_velocity = VELOCITY_MULTIPLIER;
+
     int amount = 500;
     int radius = 100;
 
     //squareFormation(amount);
     //circleFormation(radius, amount);
-    spiralFormation(10, 100, 10);
+    spiralFormation(10, radius, 10);
 }
 
 //--------------------------------------------------------------------------------------
@@ -613,7 +639,7 @@ HRESULT		InitWorld(int width, int height)
 //--------------------------------------------------------------------------------------
 // Clean up the objects we've created
 //--------------------------------------------------------------------------------------
-void CleanupDevice()
+void        CleanupDevice()
 {
 	for (unsigned int i = 0; i < g_Boids.size(); i++)
 	{
@@ -780,6 +806,11 @@ void Render()
 
 	for(unsigned int i=0; i< g_Boids.size(); i++)
 	{ 
+        g_Boids[i]->setSeperationMultiplier(f_seperation);
+        g_Boids[i]->setAlignmentMultiplier(f_alignment);
+        g_Boids[i]->setCohesionMultiplier(f_cohesion);
+        g_Boids[i]->setVelocityMultiplier(f_velocity);
+		
 		g_Boids[i]->update(t, &g_Boids);
 		XMMATRIX vp = g_View * g_Projection;
 		Boid* dob = (Boid*)g_Boids[i];
@@ -844,6 +875,12 @@ void RenderImGui()
     ImGui::Begin("_.- Boid Options -._");
     ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
     ImGui::Text("Boids: %d", g_Boids.size());
+    ImGui::NewLine();
+    ImGui::SliderFloat("Seperation Multiplier", &f_seperation, -1.0f, 2.0f);
+    ImGui::SliderFloat("Alignment Multiplier", &f_alignment, -1.0f, 2.0f);
+    ImGui::SliderFloat("Cohesion Multiplier", &f_cohesion, 0.0f, 0.01f);
+    ImGui::NewLine();
+    ImGui::SliderFloat("Velocity Multiplier", &f_velocity, -1.0f, 2.0f);
     ImGui::End();
 
     ImGui::Render();

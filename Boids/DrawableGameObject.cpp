@@ -170,15 +170,21 @@ void DrawableGameObject::setPosition(XMFLOAT3 position)
 	m_position = position;
 }
 
+void DrawableGameObject::setScale(const float scale)
+{
+	m_scale = scale;
+}
 
 void DrawableGameObject::update(float t)
 {
+	XMMATRIX mSize = XMMatrixScaling(m_scale, m_scale, m_scale);
+
 	// Cube:  Rotate around origin
 	XMMATRIX mSpin = XMMatrixRotationZ(-t);
 	
 	XMMATRIX mTranslate = XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
 
-	XMStoreFloat4x4(&m_World, mSpin * mTranslate);
+	XMStoreFloat4x4(&m_World, mSize * mSpin * mTranslate);
 }
 
 

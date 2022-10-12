@@ -3,17 +3,12 @@
 
 #define NEARBY_DISTANCE			100.0f	// how far boids can see
 
-#define SEPERATION_MULTIPLIER	0.02f
-#define ALIGNMENT_MULTPLIER		0.1f
-#define COHESION_MULTIPLIER		0.01f
-#define VELOCITY_MULTIPLIER		0.05f
-
 Boid::Boid(XMFLOAT3 position)
 {
 	m_position = position;
 	createRandomDirection();
 
-	m_speed = 200;
+	m_speed = 100;
 }
 
 Boid::~Boid()
@@ -36,6 +31,25 @@ void Boid::setDirection(XMFLOAT3 direction)
 	v = XMVector3Normalize(v);
 	XMStoreFloat3(&m_direction, v);
 }
+void Boid::setSeperationMultiplier(const float value)
+{
+	m_seperationMultiplier = value;
+}
+
+void Boid::setAlignmentMultiplier(const float value)
+{
+	m_alignmentMultiplier = value;
+}
+
+void Boid::setCohesionMultiplier(const float value)
+{
+	m_alignmentMultiplier = value;
+}
+
+void Boid::setVelocityMultiplier(const float value)
+{
+	m_velocityMultiplier = value;
+}
 
 void Boid::update(float t, vecBoid* boidList)
 {
@@ -51,28 +65,30 @@ void Boid::update(float t, vecBoid* boidList)
 	XMFLOAT3 vVelocity = XMFLOAT3(0, 0, 0);
 
 	if(magnitudeFloat3(vSeparation) > 0.0f)
-		//vVelocity = addFloat3(vSeparation, vVelocity);
-		vVelocity = addWeightedFloat3(vCohesion, SEPERATION_MULTIPLIER);
+		vVelocity = addWeightedFloat3(vSeparation, m_seperationMultiplier/1000.0f);
 
 	if (magnitudeFloat3(vAlignment) > 0.0f)
-		//vVelocity = addFloat3(vAlignment, vVelocity);
-		vVelocity = addWeightedFloat3(vCohesion, ALIGNMENT_MULTPLIER);
+		vVelocity = addWeightedFloat3(vAlignment, m_alignmentMultiplier/100.0f);
 
 	if (magnitudeFloat3(vCohesion) > 0.0f)
-		//vVelocity = addFloat3(vCohesion, vVelocity);
-		vVelocity = addWeightedFloat3(vCohesion, COHESION_MULTIPLIER);
+		vVelocity = addWeightedFloat3(vCohesion, m_cohesionMultiplier/100.0f);
 
+	// set shark
+	if (m_scale == 1) {
+		vVelocity = addFloat3(vSeparation, vAlignment);
+		vVelocity = addFloat3(vVelocity, vCohesion);
+	}
 	
 	if (magnitudeFloat3(vVelocity) != 0.0f)
 	{
 		vVelocity = normaliseFloat3(vVelocity);
 
 		
-		//multiplyFloat3(vVelocity, 0.1);
+		//multiplyFloat3(vVelocity, m_velocityMultiplier/10.0f);
 		//m_direction = addFloat3(m_direction, vVelocity);
 		//m_direction = normaliseFloat3(m_direction);
 
-		m_direction = addWeightedFloat3(vVelocity, VELOCITY_MULTIPLIER);
+		m_direction = addWeightedFloat3(vVelocity, m_velocityMultiplier);
 	}
 	
 	XMFLOAT3 vDirection = multiplyFloat3(m_direction, t * m_speed);
@@ -83,7 +99,7 @@ void Boid::update(float t, vecBoid* boidList)
 
 XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& source, const float multiplier)
 {
-	XMFLOAT3 vWeighted = multiplyFloat3(source, 0.1);
+	XMFLOAT3 vWeighted = multiplyFloat3(source, multiplier);
 	return normaliseFloat3(vWeighted);
 }
 
@@ -95,7 +111,7 @@ XMFLOAT3 Boid::calculateSeparationVector(vecBoid* boidList)
 
 	// calculate average position of nearby
 
-	float nearestDistance = 9999.0f;
+	float nearestDistance = NEARBY_DISTANCE;// 9999.0f;
 	DrawableGameObject* nearest = nullptr;
 	XMFLOAT3 directionNearestStored;
 
