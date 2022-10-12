@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+/.vs
+/Boids/.vs/Boids/v16
+/Boids/.vscode
