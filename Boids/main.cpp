@@ -16,8 +16,10 @@
 
 #include "main.h"
 
-#include <time.h>  
+#include <time.h>
 #include "Boid.h"
+
+#include "ImGui.h"
 
 
 //--------------------------------------------------------------------------------------
@@ -28,15 +30,18 @@ DirectX::XMFLOAT4 g_EyePosition(0.0f, 0, -200, 1.0f);
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
-HRESULT		InitWindow(HINSTANCE hInstance, int nCmdShow);
-HRESULT		InitDevice();
-HRESULT		InitMesh();
-HRESULT		InitWorld(int width, int height);
-void		CleanupDevice();
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-void		Render();
-void		OutputValue(float f, string name);
+HRESULT 		        InitWindow(HINSTANCE hInstance, int nCmdShow);
+HRESULT	    	        InitDevice();
+HRESULT		            InitMesh();
+HRESULT		            InitWorld(int width, int height);
+void		            CleanupDevice();
+LRESULT CALLBACK        WndProc(HWND, UINT, WPARAM, LPARAM);
+void		            Render();
+void		            OutputValue(float f, string name);
 
+void                    InitImGui();
+void                    RenderImGui();
+void                    CleanupImGui();
 
 //--------------------------------------------------------------------------------------
 // Global Variables
@@ -178,12 +183,15 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
         return 0;
+	
 
     if( FAILED( InitDevice() ) )
     {
         CleanupDevice();
         return 0;
     }
+
+    InitImGui();
 
     // Main message loop
     MSG msg = {0};
@@ -199,7 +207,8 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
             Render();
         }
     }
-
+	
+    CleanupImGui();
     CleanupDevice();
 
     return ( int )msg.wParam;
@@ -257,7 +266,7 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 //
 // With VS 11, we could load up prebuilt .cso files instead...
 //--------------------------------------------------------------------------------------
-HRESULT CompileShaderFromFile( const WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut )
+HRESULT     CompileShaderFromFile( const WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut )
 {
     HRESULT hr = S_OK;
 
@@ -294,7 +303,7 @@ HRESULT CompileShaderFromFile( const WCHAR* szFileName, LPCSTR szEntryPoint, LPC
 //--------------------------------------------------------------------------------------
 // Create Direct3D device and swap chain
 //--------------------------------------------------------------------------------------
-HRESULT InitDevice()
+HRESULT     InitDevice()
 {
     HRESULT hr = S_OK;
 
@@ -655,14 +664,17 @@ void CleanupDevice()
     if (g_pd3dDevice) g_pd3dDevice->Release();
 }
 
-
 //--------------------------------------------------------------------------------------
 // Called every time the application receives a message
 //--------------------------------------------------------------------------------------
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     PAINTSTRUCT ps;
     HDC hdc;
+
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+        return true;
 
     switch( message )
     {
@@ -792,6 +804,8 @@ void Render()
 		// draw 
 		g_Boids[i]->draw(g_pImmediateContext);
 	}
+	
+    RenderImGui();
 
     // Present our back buffer to our front buffer
     g_pSwapChain->Present( 0, 0 );
@@ -804,3 +818,42 @@ void OutputValue(float f, string name)
 	sprintf_s(sz, "%s: %f\n", name.c_str(), f);
 	OutputDebugStringA(sz);
 }
+
+
+//--------------------------------------------------------------------------------------
+// ImGui Implementation Methods
+//--------------------------------------------------------------------------------------
+
+void InitImGui()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    ImGui::StyleColorsDark();
+    ImGui_ImplWin32_Init(g_hWnd);
+    ImGui_ImplDX11_Init(g_pd3dDevice, g_pImmediateContext);
+}
+
+void RenderImGui()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	
+    ImGui::Begin("_.- Boid Options -._");
+    ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+    ImGui::Text("Boids: %d", g_Boids.size());
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void CleanupImGui()
+{
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+}
+
