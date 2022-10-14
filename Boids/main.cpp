@@ -110,12 +110,13 @@ Boid* createFish(XMFLOAT3 position, bool shark)
 void squareFormation(int amount)
 {
     XMFLOAT3 position;
+    int perLine = round(sqrt(amount));
 
-    for (int x = 0; x < amount; x++)
+    for (int x = 0; x < perLine; x++)
     {
-        for (int y = 0; y < amount; y++)
+        for (int y = 0; y < perLine; y++)
         {
-            position = XMFLOAT3(x * amount, y * amount, 0);
+            position = XMFLOAT3(x * perLine, y * perLine, 0);
 			if (x == 0 && y == 0)
                 Boid* fish = createFish(position, true);
             else
@@ -193,9 +194,9 @@ void placeFish()
     int amount = 500;
     int radius = 100;
 
-    //squareFormation(amount);
+    squareFormation(amount);
     //circleFormation(radius, amount);
-    spiralFormation(10, radius, 10);
+    //spiralFormation(10, radius, 10);
 }
 
 //--------------------------------------------------------------------------------------
@@ -868,6 +869,14 @@ void InitImGui()
 
 void RenderImGui()
 {
+    const float vMin = -1.0f;
+    const float vMax = 2.0f;
+
+    static int i_boidAmount = 100;
+    static int i_radius = 100;
+    static int i_coils = 10;
+    static int i_rotation = 10;
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -876,11 +885,36 @@ void RenderImGui()
     ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
     ImGui::Text("Boids: %d", g_Boids.size());
     ImGui::NewLine();
-    ImGui::SliderFloat("Seperation Multiplier", &f_seperation, -1.0f, 2.0f);
-    ImGui::SliderFloat("Alignment Multiplier", &f_alignment, -1.0f, 2.0f);
-    ImGui::SliderFloat("Cohesion Multiplier", &f_cohesion, 0.0f, 0.01f);
+    ImGui::InputInt("Boid Amount", &i_boidAmount);
+    ImGui::InputInt("Shape Radius", &i_radius);
+    ImGui::InputInt("Rotation", &i_rotation);
+    ImGui::InputInt("Coils", &i_coils);
+    if (ImGui::Button("Square")) 
+    {
+        g_Boids.clear();
+        squareFormation(i_boidAmount);
+    }
+    if (ImGui::Button("Circle"))
+    {
+        g_Boids.clear();
+        circleFormation(i_radius, i_boidAmount);
+    }
+    if (ImGui::Button("Spiral"))
+    {
+        g_Boids.clear();
+        spiralFormation(i_coils, i_radius, i_rotation);
+    }
     ImGui::NewLine();
-    ImGui::SliderFloat("Velocity Multiplier", &f_velocity, -1.0f, 2.0f);
+    ImGui::SliderFloat("Seperation Multiplier", &f_seperation, vMin, vMax);
+    ImGui::InputFloat("Seperation:", &f_seperation, vMin, vMax, "%.4f");
+    ImGui::SliderFloat("Alignment Multiplier", &f_alignment, vMin, vMax);
+    ImGui::InputFloat("Alignment :", &f_alignment, vMin, vMax, "%.4f");
+    ImGui::SliderFloat("Cohesion Multiplier", &f_cohesion, 0.0f, 0.01f);
+    ImGui::InputFloat("Cohesion:", &f_cohesion, vMin, vMax, "%.4f");
+    ImGui::NewLine();
+    ImGui::SliderFloat("Velocity Multiplier", &f_velocity, vMin, vMax);
+    ImGui::InputFloat("Velocity:", &f_velocity, vMin, vMax, "%.4f");
+    ImGui::NewLine();
     ImGui::End();
 
     ImGui::Render();

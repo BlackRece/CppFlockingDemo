@@ -36,9 +36,10 @@ protected:
 	XMFLOAT3							multiplyFloat3(XMFLOAT3& f1, const float scalar);
 	XMFLOAT3							divideFloat3(XMFLOAT3& f1, const float scalar);
 
-	XMFLOAT3							addWeightedFloat3(XMFLOAT3& source, const float multiplier);
+	XMFLOAT3							addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float multiplier);
 
 	XMFLOAT3							m_direction;
+	XMFLOAT3							m_velocity;
 	float								m_speed;
 
 private:

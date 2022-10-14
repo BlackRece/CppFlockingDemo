@@ -1,7 +1,7 @@
 #include "Boid.h"
 
 
-#define NEARBY_DISTANCE			100.0f	// how far boids can see
+#define NEARBY_DISTANCE			50.0f	// how far boids can see
 
 Boid::Boid(XMFLOAT3 position)
 {
@@ -64,31 +64,53 @@ void Boid::update(float t, vecBoid* boidList)
 	// set me
 	XMFLOAT3 vVelocity = XMFLOAT3(0, 0, 0);
 
+	
 	if(magnitudeFloat3(vSeparation) > 0.0f)
-		vVelocity = addWeightedFloat3(vSeparation, m_seperationMultiplier/1000.0f);
+		vVelocity = addWeightedFloat3(vVelocity, vSeparation, m_seperationMultiplier);
 
 	if (magnitudeFloat3(vAlignment) > 0.0f)
-		vVelocity = addWeightedFloat3(vAlignment, m_alignmentMultiplier/100.0f);
+		vVelocity = addWeightedFloat3(vVelocity, vAlignment, m_alignmentMultiplier);
 
 	if (magnitudeFloat3(vCohesion) > 0.0f)
-		vVelocity = addWeightedFloat3(vCohesion, m_cohesionMultiplier/100.0f);
+		vVelocity = addWeightedFloat3(vVelocity, vCohesion, m_cohesionMultiplier);
+
+	
+	/*
+	vSeparation = multiplyFloat3(vSeparation, 1.1);
+	vAlignment = multiplyFloat3(vAlignment, 1);
+	vCohesion = multiplyFloat3(vCohesion, 1);
+	
+
+	if (magnitudeFloat3(vSeparation) > 0.0f)
+		vVelocity =  addFloat3(vSeparation, vVelocity);
+
+	if (magnitudeFloat3(vAlignment) > 0.0f)
+		vVelocity = addFloat3(vAlignment, vVelocity);
+
+	if (magnitudeFloat3(vCohesion) > 0.0f)
+		vVelocity = addFloat3(vCohesion, vVelocity);
+
+	vVelocity = normaliseFloat3(vVelocity);
+		*/
 
 	// set shark
-	if (m_scale == 1) {
-		vVelocity = addFloat3(vSeparation, vAlignment);
-		vVelocity = addFloat3(vVelocity, vCohesion);
+	if (m_scale != 1) {
+		//XMFLOAT3 vAgression = multiplyFloat3(vSeparation, -1.0f);
+		//vVelocity = addFloat3(vAgression, vAlignment);
+		//vVelocity = addFloat3(vVelocity, vCohesion);
 	}
 	
 	if (magnitudeFloat3(vVelocity) != 0.0f)
 	{
-		vVelocity = normaliseFloat3(vVelocity);
+		vVelocity = multiplyFloat3(vVelocity, t);
+		m_velocity = normaliseFloat3(vVelocity);
 
 		
 		//multiplyFloat3(vVelocity, m_velocityMultiplier/10.0f);
 		//m_direction = addFloat3(m_direction, vVelocity);
 		//m_direction = normaliseFloat3(m_direction);
 
-		m_direction = addWeightedFloat3(vVelocity, m_velocityMultiplier);
+		m_direction = m_velocity;// addWeightedFloat3(vVelocity, m_velocityMultiplier);
 	}
 	
 	XMFLOAT3 vDirection = multiplyFloat3(m_direction, t * m_speed);
@@ -97,10 +119,11 @@ void Boid::update(float t, vecBoid* boidList)
 	DrawableGameObject::update(t);
 }
 
-XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& source, const float multiplier)
+XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float multiplier)
 {
 	XMFLOAT3 vWeighted = multiplyFloat3(source, multiplier);
-	return normaliseFloat3(vWeighted);
+	dest = addFloat3(dest, vWeighted);
+	return normaliseFloat3(dest);
 }
 
 XMFLOAT3 Boid::calculateSeparationVector(vecBoid* boidList)

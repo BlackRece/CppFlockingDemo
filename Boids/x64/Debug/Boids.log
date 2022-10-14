@@ -1,27 +1,28 @@
 ﻿  Boid.cpp
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\Boid.cpp(152,54): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\Boid.cpp(168,46): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\Boid.cpp(225,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\Boid.cpp(175,54): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\Boid.cpp(191,46): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\Boid.cpp(248,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
   main.cpp
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(118,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(118,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(120,23): warning C4189: 'fish': local variable is initialized but not referenced
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(122,11): warning C4189: 'fish': local variable is initialized but not referenced
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(130,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(135,23): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(136,23): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(139,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(139,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(141,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(141,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(139,19): warning C4189: 'fish': local variable is initialized but not referenced
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(141,19): warning C4189: 'fish': local variable is initialized but not referenced
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(159,50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(159,41): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(177,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(177,42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(159,11): warning C4189: 'midFish': local variable is initialized but not referenced
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(177,15): warning C4189: 'fish': local variable is initialized but not referenced
-D:\Documents\GitHub\BlackRece\CppFlockingDemo\Boids\main.cpp(193,9): warning C4189: 'amount': local variable is initialized but not referenced
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(113,17): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(119,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(119,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(121,23): warning C4189: 'fish': local variable is initialized but not referenced
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(123,11): warning C4189: 'fish': local variable is initialized but not referenced
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(131,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(136,23): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(137,23): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(140,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(140,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(142,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(142,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(140,19): warning C4189: 'fish': local variable is initialized but not referenced
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(142,19): warning C4189: 'fish': local variable is initialized but not referenced
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(160,50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(160,41): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(178,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(178,42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(160,11): warning C4189: 'midFish': local variable is initialized but not referenced
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(178,15): warning C4189: 'fish': local variable is initialized but not referenced
+C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\Boids\main.cpp(195,9): warning C4189: 'radius': local variable is initialized but not referenced
   Generating Code...
-  Boids.vcxproj -> D:\Documents\GitHub\BlackRece\CppFlockingDemo\x64\Debug\Boids.exe
+  Boids.vcxproj -> C:\Users\t016836i\source\repos\BlackRece\CppFlockingDemo\x64\Debug\Boids.exe
