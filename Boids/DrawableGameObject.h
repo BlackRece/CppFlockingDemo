@@ -47,6 +47,7 @@ public:
 	XMFLOAT3*							getPosition() { return &m_position; }
 	
 	void								setScale(const float scale);
+	void								setAmbientColour(XMFLOAT4 colour);
 
 
 
@@ -60,7 +61,7 @@ public:
 	MaterialPropertiesConstantBuffer	m_material;
 	XMFLOAT3							m_position;
 	float								m_scale;
-
+	XMFLOAT4							m_ambientColour;
 	
 };
 

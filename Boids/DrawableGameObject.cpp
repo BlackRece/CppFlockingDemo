@@ -27,6 +27,7 @@ DrawableGameObject::DrawableGameObject()
 
 
 	m_position = XMFLOAT3(0, 0, 0);
+	m_ambientColour = XMFLOAT4(0, 0, 0, 1.0f);
 }
 
 
@@ -157,6 +158,7 @@ HRESULT DrawableGameObject::initMesh(ID3D11Device* pd3dDevice, ID3D11DeviceConte
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	hr = pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
 
+	m_material.Material.Ambient = m_ambientColour; //XMFLOAT4(255.0f, 0.0f, 0.0f, 1.0f);
 	m_material.Material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	m_material.Material.Specular = XMFLOAT4(1.0f, 0.2f, 0.2f, 1.0f);
 	m_material.Material.SpecularPower = 32.0f;
@@ -173,6 +175,11 @@ void DrawableGameObject::setPosition(XMFLOAT3 position)
 void DrawableGameObject::setScale(const float scale)
 {
 	m_scale = scale;
+}
+
+void DrawableGameObject::setAmbientColour(XMFLOAT4 colour)
+{
+	m_ambientColour = colour;
 }
 
 void DrawableGameObject::update(float t)

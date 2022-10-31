@@ -96,13 +96,19 @@ Boid* createFish(XMFLOAT3 position, bool shark)
     HRESULT hr;
 
     Boid* fish = new Boid(position);
-    hr = fish->initMesh(g_pd3dDevice, g_pImmediateContext);
-    if (FAILED(hr))
-        return fish;
-    fish->setPosition(position);
+
     fish->setScale(1.0f);
     if (shark)
+    {
         fish->setScale(3.0f);
+        fish->setAmbientColour(XMFLOAT4(255.0f, 0.0f, 0.0f, 1.0f));
+    }
+
+    hr = fish->initMesh(g_pd3dDevice, g_pImmediateContext);
+    
+    if (FAILED(hr))
+        return fish;
+
     g_Boids.push_back(fish);
     return fish;
 }
@@ -814,9 +820,10 @@ void Render()
 		
 		g_Boids[i]->update(t, &g_Boids);
 		XMMATRIX vp = g_View * g_Projection;
-		Boid* dob = (Boid*)g_Boids[i];
+		//Boid* dob = (Boid*)g_Boids[i];
 
-		dob->checkIsOnScreenAndFix(g_View, g_Projection);
+		//dob->checkIsOnScreenAndFix(g_View, g_Projection);
+        g_Boids[i]->checkIsOnScreenAndFix(g_View, g_Projection);
 
 		setupTransformConstantBuffer(i);
 		setupLightingConstantBuffer();
