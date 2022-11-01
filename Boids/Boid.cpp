@@ -6,6 +6,7 @@
 Boid::Boid(XMFLOAT3 position)
 {
 	m_position = position;
+	m_direction = XMFLOAT3(0, 1, 0);
 	createRandomDirection();
 
 	m_speed = 100;
@@ -31,6 +32,7 @@ void Boid::setDirection(XMFLOAT3 direction)
 	v = XMVector3Normalize(v);
 	XMStoreFloat3(&m_direction, v);
 }
+
 void Boid::setSeperationMultiplier(const float value)
 {
 	m_seperationMultiplier = value;
@@ -63,36 +65,17 @@ void Boid::update(float t, vecBoid* boidList)
 
 	// set me
 	XMFLOAT3 vVelocity = XMFLOAT3(0, 0, 0);
-
 	
-	if(magnitudeFloat3(vSeparation) > 0.0f)
-		vVelocity = addWeightedFloat3(vVelocity, vSeparation, m_seperationMultiplier);
-
-	if (magnitudeFloat3(vAlignment) > 0.0f)
-		vVelocity = addWeightedFloat3(vVelocity, vAlignment, m_alignmentMultiplier);
-
-	if (magnitudeFloat3(vCohesion) > 0.0f)
-		vVelocity = addWeightedFloat3(vVelocity, vCohesion, m_cohesionMultiplier);
-
+	vSeparation = multiplyFloat3(vSeparation, m_seperationMultiplier);
+	vAlignment = multiplyFloat3(vAlignment, m_alignmentMultiplier);
+	vCohesion = multiplyFloat3(vCohesion, m_cohesionMultiplier);
 	
-	/*
-	vSeparation = multiplyFloat3(vSeparation, 1.1);
-	vAlignment = multiplyFloat3(vAlignment, 1);
-	vCohesion = multiplyFloat3(vCohesion, 1);
+	vVelocity = addFloat3(vVelocity, vSeparation);
+	vVelocity = addFloat3(vVelocity, vAlignment);
+	vVelocity = addFloat3(vVelocity, vCohesion);
 	
-
-	if (magnitudeFloat3(vSeparation) > 0.0f)
-		vVelocity =  addFloat3(vSeparation, vVelocity);
-
-	if (magnitudeFloat3(vAlignment) > 0.0f)
-		vVelocity = addFloat3(vAlignment, vVelocity);
-
-	if (magnitudeFloat3(vCohesion) > 0.0f)
-		vVelocity = addFloat3(vCohesion, vVelocity);
-
-	vVelocity = normaliseFloat3(vVelocity);
-		*/
-
+	//vVelocity = normaliseFloat3(vVelocity);
+	
 	// set shark
 	if (m_scale != 1) {
 		//XMFLOAT3 vAgression = multiplyFloat3(vSeparation, -1.0f);
@@ -100,21 +83,19 @@ void Boid::update(float t, vecBoid* boidList)
 		//vVelocity = addFloat3(vVelocity, vCohesion);
 	}
 	
-	if (magnitudeFloat3(vVelocity) != 0.0f)
+	m_direction = addFloat3(m_direction, vVelocity);
+	
+	if (magnitudeFloat3(m_direction) > 0.0f)
 	{
-		vVelocity = multiplyFloat3(vVelocity, t);
-		m_velocity = normaliseFloat3(vVelocity); // <- this seems wrong
-
-		
-		//multiplyFloat3(vVelocity, m_velocityMultiplier/10.0f);
-		//m_direction = addFloat3(m_direction, vVelocity);
-		//m_direction = normaliseFloat3(m_direction);
-
-		m_direction = m_velocity;// addWeightedFloat3(vVelocity, m_velocityMultiplier);
+		XMFLOAT3 vDirection = multiplyFloat3(m_direction, t * m_speed);
+		m_direction = normaliseFloat3(vDirection);
+		m_position = addFloat3(m_position, m_direction);
+	}
+	else
+	{
+		createRandomDirection();
 	}
 	
-	XMFLOAT3 vDirection = multiplyFloat3(m_direction, t * m_speed);
-	m_position = addFloat3(m_position, vDirection);
 
 	DrawableGameObject::update(t);
 }
@@ -157,20 +138,19 @@ XMFLOAT3 Boid::calculateSeparationVector(vecBoid* boidList)
 	}
 
 	if (nearest != nullptr) {
-		//return normaliseFloat3(directionNearestStored);
-		return directionNearestStored;
+		return normaliseFloat3(directionNearestStored);
+		//return directionNearestStored;
 	}
 
-	//return m_direction;
-	return nearby;
-	
+	return m_direction;
 }
 
 XMFLOAT3 Boid::calculateAlignmentVector(vecBoid* boidList)
 {
-	XMFLOAT3 vDirection = XMFLOAT3(0, 0, 0);
 	if (boidList == nullptr)
-		return vDirection;
+		return m_direction;
+	
+	XMFLOAT3 vDirection = XMFLOAT3(0, 0, 0);
 
 	// your code here
 	for (Boid* boid : *boidList)
@@ -178,16 +158,15 @@ XMFLOAT3 Boid::calculateAlignmentVector(vecBoid* boidList)
 
 	vDirection = divideFloat3(vDirection, boidList->size());
 
-	//return normaliseFloat3(vDirection); // return the normalised (average) direction of nearby drawables
-	return vDirection;
+	return normaliseFloat3(vDirection); // return the normalised (average) direction of nearby drawables
 }
 
 XMFLOAT3 Boid::calculateCohesionVector(vecBoid* boidList)
 {
-	XMFLOAT3 nearby = XMFLOAT3(0, 0, 0);
-
 	if (boidList == nullptr)
-		return nearby;
+		return m_direction;
+
+	XMFLOAT3 nearby = XMFLOAT3(0, 0, 0);
 
 	// calculate average position of nearby
 	for (Boid* boid : *boidList) 
@@ -196,10 +175,8 @@ XMFLOAT3 Boid::calculateCohesionVector(vecBoid* boidList)
 	nearby = divideFloat3(nearby, boidList->size());
 	nearby = subtractFloat3(nearby, m_position);
 
-	//return normaliseFloat3(nearby); // nearby is the direction to where the other drawables are
-	return nearby;
+	return normaliseFloat3(nearby); // nearby is the direction to where the other drawables are
 }
-
 
 
 // use but don't alter the methods below

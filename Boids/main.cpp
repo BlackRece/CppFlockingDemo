@@ -14,11 +14,11 @@
 //--------------------------------------------------------------------------------------
 #define _XM_NO_INTRINSICS_
 
-#define SEPERATION_MULTIPLIER	0.02f
-#define ALIGNMENT_MULTPLIER		0.1f
-#define COHESION_MULTIPLIER		0.01f
+#define SEPERATION_MULTIPLIER	1.4f
+#define ALIGNMENT_MULTPLIER		4.0f
+#define COHESION_MULTIPLIER		1.0f
 
-#define VELOCITY_MULTIPLIER		0.01f
+#define VELOCITY_MULTIPLIER		5.0f
 
 #include "main.h"
 
@@ -197,7 +197,7 @@ void placeFish()
 
     f_velocity = VELOCITY_MULTIPLIER;
 
-    int amount = 500;
+    int amount = 100;
     int radius = 100;
 
     squareFormation(amount);
