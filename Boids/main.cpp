@@ -14,9 +14,9 @@
 //--------------------------------------------------------------------------------------
 #define _XM_NO_INTRINSICS_
 
-#define SEPERATION_MULTIPLIER	1.4f
-#define ALIGNMENT_MULTPLIER		4.0f
-#define COHESION_MULTIPLIER		1.0f
+#define SEPERATION_MULTIPLIER	12.0f
+#define ALIGNMENT_MULTPLIER		8.0f
+#define COHESION_MULTIPLIER		8.0f
 
 #define VELOCITY_MULTIPLIER		5.0f
 
@@ -85,10 +85,10 @@ vecBoid					g_Boids;
 
 constexpr auto          g_PI = 3.14159265358979323846;
 
-static float            f_seperation;
-static float            f_alignment;
-static float            f_cohesion;
-static float            f_velocity;
+static float            g_seperation;
+static float            g_alignment;
+static float            g_cohesion;
+static float            g_velocity;
 
 
 Boid* createFish(XMFLOAT3 position, bool shark)
@@ -191,11 +191,11 @@ void spiralFormation(int coils, int radius, int rotation)
 
 void placeFish()
 {
-    f_seperation = SEPERATION_MULTIPLIER;
-    f_alignment = ALIGNMENT_MULTPLIER;
-    f_cohesion = COHESION_MULTIPLIER;
+    g_seperation = SEPERATION_MULTIPLIER;
+    g_alignment = ALIGNMENT_MULTPLIER;
+    g_cohesion = COHESION_MULTIPLIER;
 
-    f_velocity = VELOCITY_MULTIPLIER;
+    g_velocity = VELOCITY_MULTIPLIER;
 
     int amount = 100;
     int radius = 100;
@@ -813,10 +813,10 @@ void Render()
 
 	for(unsigned int i=0; i< g_Boids.size(); i++)
 	{ 
-        g_Boids[i]->setSeperationMultiplier(f_seperation);
-        g_Boids[i]->setAlignmentMultiplier(f_alignment);
-        g_Boids[i]->setCohesionMultiplier(f_cohesion);
-        g_Boids[i]->setVelocityMultiplier(f_velocity);
+        g_Boids[i]->setSeperationMultiplier(g_seperation);
+        g_Boids[i]->setAlignmentMultiplier(g_alignment);
+        g_Boids[i]->setCohesionMultiplier(g_cohesion);
+        g_Boids[i]->setVelocityMultiplier(g_velocity);
 		
 		g_Boids[i]->update(t, &g_Boids);
 		XMMATRIX vp = g_View * g_Projection;
@@ -912,15 +912,15 @@ void RenderImGui()
         spiralFormation(i_coils, i_radius, i_rotation);
     }
     ImGui::NewLine();
-    ImGui::SliderFloat("Seperation Multiplier", &f_seperation, vMin, vMax);
-    ImGui::InputFloat("Seperation:", &f_seperation, vMin, vMax, "%.4f");
-    ImGui::SliderFloat("Alignment Multiplier", &f_alignment, vMin, vMax);
-    ImGui::InputFloat("Alignment :", &f_alignment, vMin, vMax, "%.4f");
-    ImGui::SliderFloat("Cohesion Multiplier", &f_cohesion, 0.0f, 0.01f);
-    ImGui::InputFloat("Cohesion:", &f_cohesion, vMin, vMax, "%.4f");
+    ImGui::SliderFloat("Seperation Multiplier", &g_seperation, vMin, vMax);
+    ImGui::InputFloat("Seperation:", &g_seperation, vMin, vMax, "%.4f");
+    ImGui::SliderFloat("Alignment Multiplier", &g_alignment, vMin, vMax);
+    ImGui::InputFloat("Alignment :", &g_alignment, vMin, vMax, "%.4f");
+    ImGui::SliderFloat("Cohesion Multiplier", &g_cohesion, 0.0f, 0.01f);
+    ImGui::InputFloat("Cohesion:", &g_cohesion, vMin, vMax, "%.4f");
     ImGui::NewLine();
-    ImGui::SliderFloat("Velocity Multiplier", &f_velocity, vMin, vMax);
-    ImGui::InputFloat("Velocity:", &f_velocity, vMin, vMax, "%.4f");
+    ImGui::SliderFloat("Velocity Multiplier", &g_velocity, vMin, vMax);
+    ImGui::InputFloat("Velocity:", &g_velocity, vMin, vMax, "%.4f");
     ImGui::NewLine();
     ImGui::End();
 

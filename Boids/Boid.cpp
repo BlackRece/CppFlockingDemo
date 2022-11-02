@@ -1,7 +1,6 @@
 #include "Boid.h"
 
-
-#define NEARBY_DISTANCE			50.0f	// how far boids can see
+#define NEARBY_DISTANCE			20.0f	// how far boids can see
 
 Boid::Boid(XMFLOAT3 position)
 {
@@ -59,7 +58,8 @@ void Boid::update(float t, vecBoid* boidList)
 	vecBoid nearBoids = nearbyBoids(boidList);
 
 	// NOTE these functions should always return a normalised vector
-	XMFLOAT3  vSeparation = calculateSeparationVector(&nearBoids);
+	XMFLOAT3  vSeparation = calculateSeparationVector_Group(&nearBoids);
+	//XMFLOAT3  vSeparation = calculateSeparationVector_Nearest(&nearBoids);
 	XMFLOAT3  vAlignment = calculateAlignmentVector(&nearBoids);
 	XMFLOAT3  vCohesion = calculateCohesionVector(&nearBoids);
 
@@ -75,6 +75,8 @@ void Boid::update(float t, vecBoid* boidList)
 	vVelocity = addFloat3(vVelocity, vCohesion);
 	
 	//vVelocity = normaliseFloat3(vVelocity);
+	
+	//add lerp m_direction to desired dir
 	
 	// set shark
 	if (m_scale != 1) {
@@ -96,7 +98,6 @@ void Boid::update(float t, vecBoid* boidList)
 		createRandomDirection();
 	}
 	
-
 	DrawableGameObject::update(t);
 }
 
@@ -108,17 +109,50 @@ XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float m
 	//return normaliseFloat3(dest);
 }
 
-XMFLOAT3 Boid::calculateSeparationVector(vecBoid* boidList)
+XMFLOAT3 Boid::calculateSeparationVector_Group(vecBoid* boidList)
 {
-	XMFLOAT3 nearby = XMFLOAT3(0, 0, 0);
-	if (boidList == nullptr)
-		return nearby;
+	// calculate average position of nearby
+	
+	XMFLOAT3 vAverage = XMFLOAT3(0, 0, 0);
+	
+	int nearByBoids = 0;
 
+	if (boidList == nullptr)
+		return vAverage;
+	
+	for (Boid* boid : *boidList) {
+		XMFLOAT3 mePos = m_position;
+		XMFLOAT3 itPos = *boid->getPosition();
+
+		XMFLOAT3 directionNearest = subtractFloat3(itPos, mePos);
+		const float nearestDistanceSquared = dotProduct(directionNearest, directionNearest);
+	
+		XMFLOAT3 boidDirection = divideFloat3(directionNearest, -nearestDistanceSquared);
+		vAverage = addFloat3(vAverage, boidDirection);
+		
+		nearByBoids++;
+	}
+	
+	if (nearByBoids > 0)
+	{
+		vAverage = divideFloat3(vAverage, (float)nearByBoids);
+		vAverage = normaliseFloat3(vAverage);
+	}
+
+	return vAverage;
+}
+
+XMFLOAT3 Boid::calculateSeparationVector_Nearest(vecBoid* boidList)
+{
 	// calculate average position of nearby
 
 	float nearestDistance = NEARBY_DISTANCE;// 9999.0f;
 	DrawableGameObject* nearest = nullptr;
 	XMFLOAT3 directionNearestStored;
+
+	XMFLOAT3 nearby = XMFLOAT3(0, 0, 0);
+	if (boidList == nullptr)
+		return nearby;
 
 	for (Boid* boid : *boidList) {
 		if (boid == this)
@@ -127,7 +161,7 @@ XMFLOAT3 Boid::calculateSeparationVector(vecBoid* boidList)
 		XMFLOAT3 mePos = m_position;
 		XMFLOAT3 itPos = *boid->getPosition();
 
-		XMFLOAT3 directionNearest = subtractFloat3(mePos, itPos);
+		XMFLOAT3 directionNearest = subtractFloat3(itPos, mePos);
 		float d = magnitudeFloat3(directionNearest);
 		if (d < nearestDistance)
 		{
@@ -138,8 +172,11 @@ XMFLOAT3 Boid::calculateSeparationVector(vecBoid* boidList)
 	}
 
 	if (nearest != nullptr) {
-		return normaliseFloat3(directionNearestStored);
-		//return directionNearestStored;
+		directionNearestStored = normaliseFloat3(directionNearestStored);
+		if (nearestDistance < 10.0f)
+			directionNearestStored = multiplyFloat3(directionNearestStored, 10.0f - nearestDistance);
+		//return normaliseFloat3(directionNearestStored);
+		return directionNearestStored;
 	}
 
 	return m_direction;
@@ -240,6 +277,13 @@ XMFLOAT3 Boid::normaliseFloat3(XMFLOAT3& f1)
 	f1.z /= length;
 
 	return f1;
+}
+
+float Boid::dotProduct(XMFLOAT3& f1, XMFLOAT3& f2)
+{
+	XMFLOAT3 norm1 = normaliseFloat3(f1);
+	XMFLOAT3 norm2 = normaliseFloat3(f2);
+	return (norm1.x * norm2.x) + (norm1.y * norm2.y) + (norm1.z * norm2.z);
 }
 
 vecBoid Boid::nearbyBoids(vecBoid* boidList)

@@ -1,5 +1,6 @@
 #pragma once
 #include "DrawableGameObject.h"
+
 class Boid :
 	public DrawableGameObject
 {
@@ -23,7 +24,8 @@ protected:
 
 
 	vecBoid								nearbyBoids(vecBoid* boidList);
-	XMFLOAT3							calculateSeparationVector(vecBoid* drawList);
+	XMFLOAT3							calculateSeparationVector_Group(vecBoid* drawList);
+	XMFLOAT3							calculateSeparationVector_Nearest(vecBoid* drawList);
 	XMFLOAT3							calculateAlignmentVector(vecBoid* drawList);
 	XMFLOAT3							calculateCohesionVector(vecBoid* drawList);
 	void								createRandomDirection();
@@ -32,6 +34,7 @@ protected:
 	XMFLOAT3							subtractFloat3(XMFLOAT3& f1, XMFLOAT3& f2);
 	XMFLOAT3							normaliseFloat3(XMFLOAT3& f1);
 	float								magnitudeFloat3(XMFLOAT3& f1);
+	float								dotProduct(XMFLOAT3& f1, XMFLOAT3& f2);
 	float								distanceFloat3(XMFLOAT3& f1, XMFLOAT3& f2);
 	XMFLOAT3							multiplyFloat3(XMFLOAT3& f1, const float scalar);
 	XMFLOAT3							divideFloat3(XMFLOAT3& f1, const float scalar);
