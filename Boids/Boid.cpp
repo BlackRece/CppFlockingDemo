@@ -76,7 +76,7 @@ void Boid::update(float t, vecBoid* boidList)
 	vVelocity = addFloat3(vVelocity, vSeparation);
 	vVelocity = addFloat3(vVelocity, vAlignment);
 	vVelocity = addFloat3(vVelocity, vCohesion);
-	
+	//TODO: cohesion is NAN!!!
 	//vVelocity = normaliseFloat3(vVelocity);
 	
 	//add lerp m_direction to desired dir
