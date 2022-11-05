@@ -28,6 +28,8 @@ protected:
 	XMFLOAT3							calculateSeparationVector_Nearest(vecBoid* drawList);
 	XMFLOAT3							calculateAlignmentVector(vecBoid* drawList);
 	XMFLOAT3							calculateCohesionVector(vecBoid* drawList);
+	XMFLOAT3							calculateFlockingVector(vecBoid* boidList);
+	XMFLOAT3							calculatePredatorVector(vecBoid* boidList);
 	void								createRandomDirection();
 
 	XMFLOAT3							addFloat3(XMFLOAT3& f1, XMFLOAT3& f2);
@@ -38,6 +40,7 @@ protected:
 	float								distanceFloat3(XMFLOAT3& f1, XMFLOAT3& f2);
 	XMFLOAT3							multiplyFloat3(XMFLOAT3& f1, const float scalar);
 	XMFLOAT3							divideFloat3(XMFLOAT3& f1, const float scalar);
+	XMFLOAT3							lerpFloat3(const XMFLOAT3& f1, const XMFLOAT3& f2, const float scalar);
 
 	XMFLOAT3							addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float multiplier);
 

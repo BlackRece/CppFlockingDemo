@@ -60,26 +60,12 @@ void Boid::update(float t, vecBoid* boidList)
 	// create a list of nearby boids
 	vecBoid nearBoids = nearbyBoids(boidList);
 
-	// NOTE these functions should always return a normalised vector
-	XMFLOAT3  vSeparation = calculateSeparationVector_Group(&nearBoids);
-	//XMFLOAT3  vSeparation = calculateSeparationVector_Nearest(&nearBoids);
-	XMFLOAT3  vAlignment = calculateAlignmentVector(&nearBoids);
-	XMFLOAT3  vCohesion = calculateCohesionVector(&nearBoids);
+	XMFLOAT3 vDesiredDirection = m_scale == 1 
+		? calculateFlockingVector(&nearBoids)
+		: calculatePredatorVector(&nearBoids);
 
-	// set me
-	XMFLOAT3 vVelocity = XMFLOAT3(0, 0, 0);
-	
-	vSeparation = multiplyFloat3(vSeparation, m_seperationMultiplier);
-	vAlignment = multiplyFloat3(vAlignment, m_alignmentMultiplier);
-	vCohesion = multiplyFloat3(vCohesion, m_cohesionMultiplier);
-	
-	vVelocity = addFloat3(vVelocity, vSeparation);
-	vVelocity = addFloat3(vVelocity, vAlignment);
-	vVelocity = addFloat3(vVelocity, vCohesion);
-	//TODO: cohesion is NAN!!!
-	//vVelocity = normaliseFloat3(vVelocity);
-	
 	//add lerp m_direction to desired dir
+	XMFLOAT3 vDirection = lerpFloat3(m_direction, vDesiredDirection, t);
 	
 	// set shark
 	if (m_scale != 1) {
@@ -88,16 +74,12 @@ void Boid::update(float t, vecBoid* boidList)
 		//vVelocity = addFloat3(vVelocity, vCohesion);
 	}
 	
-	if (isnan(m_direction.x))
-		m_direction = m_direction;
-	m_direction = addFloat3(m_direction, vVelocity);
+	m_direction = addFloat3(m_direction, vDesiredDirection);
 	
 	if (magnitudeFloat3(m_direction) > 0.0f)
 	{
 		XMFLOAT3 vDirection = multiplyFloat3(m_direction, t * m_speed);
 		m_direction = normaliseFloat3(vDirection);
-		if (isnan(m_direction.x))
-			m_direction = m_direction;
 		m_position = addFloat3(m_position, m_direction);
 	}
 	else
@@ -114,6 +96,32 @@ XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float m
 	return addFloat3(dest, vWeighted);
 	//dest = addFloat3(dest, vWeighted);
 	//return normaliseFloat3(dest);
+}
+
+XMFLOAT3 Boid::calculateFlockingVector(vecBoid* boidList) {
+	// NOTE these functions should always return a normalised vector
+	XMFLOAT3  vSeparation = calculateSeparationVector_Group(boidList);
+	//XMFLOAT3  vSeparation = calculateSeparationVector_Nearest(boidList);
+	XMFLOAT3  vAlignment = calculateAlignmentVector(boidList);
+	XMFLOAT3  vCohesion = calculateCohesionVector(boidList);
+
+	// set me
+	XMFLOAT3 vDesiredDirection = XMFLOAT3(0, 0, 0);
+
+	vSeparation = multiplyFloat3(vSeparation, m_seperationMultiplier);
+	vAlignment = multiplyFloat3(vAlignment, m_alignmentMultiplier);
+	vCohesion = multiplyFloat3(vCohesion, m_cohesionMultiplier);
+
+	vDesiredDirection = addFloat3(vDesiredDirection, vSeparation);
+	vDesiredDirection = addFloat3(vDesiredDirection, vAlignment);
+	vDesiredDirection = addFloat3(vDesiredDirection, vCohesion);
+
+	return vDesiredDirection;
+}
+
+XMFLOAT3 Boid::calculatePredatorVector(vecBoid* boidList) 
+{
+	return XMFLOAT3(0, 1, 0);
 }
 
 XMFLOAT3 Boid::calculateSeparationVector_Group(vecBoid* boidList)
@@ -307,6 +315,17 @@ float Boid::dotProduct(XMFLOAT3& f1, XMFLOAT3& f2)
 	//XMFLOAT3 norm2 = normaliseFloat3(f2);
 	//return (norm1.x * norm2.x) + (norm1.y * norm2.y) + (norm1.z * norm2.z);
 	return (f1.x * f2.x) + (f1.y * f2.y) + (f1.z * f2.z);
+}
+
+XMFLOAT3 Boid::lerpFloat3(const XMFLOAT3& f1, const XMFLOAT3& f2, const float scalar)
+{
+	//compute the linear interpolation between two vectors
+	XMFLOAT3 out;
+	out.x = f1.x + scalar * (f2.x - f1.x);
+	out.y = f1.y + scalar * (f2.y - f1.y);
+	out.z = f1.z + scalar * (f2.z - f1.z);
+	
+	return out;
 }
 
 vecBoid Boid::nearbyBoids(vecBoid* boidList)
