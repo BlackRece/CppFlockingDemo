@@ -14,9 +14,9 @@
 //--------------------------------------------------------------------------------------
 #define _XM_NO_INTRINSICS_
 
-#define SEPERATION_MULTIPLIER	12.0f
-#define ALIGNMENT_MULTPLIER		8.0f
-#define COHESION_MULTIPLIER		8.0f
+#define SEPERATION_MULTIPLIER	1.0f//12.0f
+#define ALIGNMENT_MULTPLIER		1.0f//8.0f
+#define COHESION_MULTIPLIER		1.0f//8.0f
 
 #define VELOCITY_MULTIPLIER		5.0f
 
@@ -181,7 +181,10 @@ void spiralFormation(int coils, int radius, int rotation)
         double y = centerY + sin(around) * away;
         //
         // Now that you know it, do it.
-        Boid* fish = createFish(XMFLOAT3(x, y, 0), false);
+        if(centerX == x && centerY == y)
+            Boid* fish = createFish(XMFLOAT3(x, y, 0), true);
+        else
+            Boid* fish = createFish(XMFLOAT3(x, y, 0), false);
 
         // to a first approximation, the points are on a circle
         // so the angle between them is chord/radius
@@ -916,7 +919,7 @@ void RenderImGui()
     ImGui::InputFloat("Seperation:", &g_seperation, vMin, vMax, "%.4f");
     ImGui::SliderFloat("Alignment Multiplier", &g_alignment, vMin, vMax);
     ImGui::InputFloat("Alignment :", &g_alignment, vMin, vMax, "%.4f");
-    ImGui::SliderFloat("Cohesion Multiplier", &g_cohesion, 0.0f, 0.01f);
+    ImGui::SliderFloat("Cohesion Multiplier", &g_cohesion, vMin, vMax);
     ImGui::InputFloat("Cohesion:", &g_cohesion, vMin, vMax, "%.4f");
     ImGui::NewLine();
     ImGui::SliderFloat("Velocity Multiplier", &g_velocity, vMin, vMax);

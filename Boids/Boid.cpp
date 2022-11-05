@@ -44,7 +44,7 @@ void Boid::setAlignmentMultiplier(const float value)
 
 void Boid::setCohesionMultiplier(const float value)
 {
-	m_alignmentMultiplier = value;
+	m_cohesionMultiplier = value;
 }
 
 void Boid::setVelocityMultiplier(const float value)
@@ -115,9 +115,7 @@ XMFLOAT3 Boid::calculateSeparationVector_Group(vecBoid* boidList)
 	
 	XMFLOAT3 vAverage = XMFLOAT3(0, 0, 0);
 	
-	int nearByBoids = 0;
-
-	if (boidList == nullptr)
+	if (boidList == nullptr || boidList->size() == 0)
 		return vAverage;
 	
 	for (Boid* boid : *boidList) {
@@ -129,15 +127,10 @@ XMFLOAT3 Boid::calculateSeparationVector_Group(vecBoid* boidList)
 	
 		XMFLOAT3 boidDirection = divideFloat3(directionNearest, -nearestDistanceSquared);
 		vAverage = addFloat3(vAverage, boidDirection);
-		
-		nearByBoids++;
 	}
 	
-	if (nearByBoids > 0)
-	{
-		vAverage = divideFloat3(vAverage, (float)nearByBoids);
-		vAverage = normaliseFloat3(vAverage);
-	}
+	vAverage = divideFloat3(vAverage, (float)boidList->size());
+	vAverage = normaliseFloat3(vAverage);
 
 	return vAverage;
 }
@@ -184,10 +177,10 @@ XMFLOAT3 Boid::calculateSeparationVector_Nearest(vecBoid* boidList)
 
 XMFLOAT3 Boid::calculateAlignmentVector(vecBoid* boidList)
 {
-	if (boidList == nullptr)
-		return m_direction;
-	
 	XMFLOAT3 vDirection = XMFLOAT3(0, 0, 0);
+
+	if (boidList == nullptr || boidList->size() == 0)
+		return vDirection;
 
 	// your code here
 	for (Boid* boid : *boidList)
@@ -200,19 +193,20 @@ XMFLOAT3 Boid::calculateAlignmentVector(vecBoid* boidList)
 
 XMFLOAT3 Boid::calculateCohesionVector(vecBoid* boidList)
 {
-	if (boidList == nullptr)
-		return m_direction;
+	XMFLOAT3 vDirection = XMFLOAT3(0, 0, 0);
 
-	XMFLOAT3 nearby = XMFLOAT3(0, 0, 0);
+	if (boidList == nullptr || boidList->size() == 0)
+		return vDirection;
 
 	// calculate average position of nearby
 	for (Boid* boid : *boidList) 
-		nearby = addFloat3(nearby, *boid->getPosition());
+		vDirection = addFloat3(vDirection, *boid->getPosition());
 
-	nearby = divideFloat3(nearby, boidList->size());
-	nearby = subtractFloat3(nearby, m_position);
+	vDirection = divideFloat3(vDirection, boidList->size());
+	vDirection = subtractFloat3(vDirection, m_position);
+	//vDirection = subtractFloat3(m_position, vDirection);
 
-	return normaliseFloat3(nearby); // nearby is the direction to where the other drawables are
+	return normaliseFloat3(vDirection); // nearby is the direction to where the other drawables are
 }
 
 
@@ -270,7 +264,9 @@ float Boid::distanceFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
 
 XMFLOAT3 Boid::normaliseFloat3(XMFLOAT3& f1)
 {
-	float length = sqrt((f1.x * f1.x) + (f1.y * f1.y) + (f1.z * f1.z));
+	//float length = sqrt((f1.x * f1.x) + (f1.y * f1.y) + (f1.z * f1.z));
+	float length = magnitudeFloat3(f1);
+	return divideFloat3(f1, length);
 
 	f1.x /= length;
 	f1.y /= length;
