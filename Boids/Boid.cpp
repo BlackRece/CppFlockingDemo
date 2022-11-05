@@ -212,7 +212,7 @@ XMFLOAT3 Boid::calculateAlignmentVector(vecBoid* boidList)
 	for (Boid* boid : *boidList)
 		vDirection = addFloat3(vDirection, *boid->getDirection());
 
-	vDirection = divideFloat3(vDirection, boidCount);
+	vDirection = divideFloat3(vDirection, boidList->size());
 
 	return normaliseFloat3(vDirection); // return the normalised (average) direction of nearby drawables
 }
@@ -229,8 +229,8 @@ XMFLOAT3 Boid::calculateCohesionVector(vecBoid* boidList)
 		vDirection = addFloat3(vDirection, *boid->getPosition());
 
 	vDirection = divideFloat3(vDirection, boidList->size());
-	vDirection = subtractFloat3(vDirection, m_position);
-	//vDirection = subtractFloat3(m_position, vDirection);
+	//vDirection = subtractFloat3(vDirection, m_position);
+	vDirection = subtractFloat3(m_position, vDirection);
 
 	return normaliseFloat3(vDirection); // nearby is the direction to where the other drawables are
 }

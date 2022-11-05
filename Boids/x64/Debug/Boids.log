@@ -1,32 +1,6 @@
 ﻿  Boid.cpp
-D:\GitHub\AI Course\CppFlockingDemo\Boids\Boid.cpp(189,54): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\Boid.cpp(205,54): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\Boid.cpp(262,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-  main.cpp
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(119,17): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(125,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(125,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(127,23): warning C4189: 'fish': local variable is initialized but not referenced
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(129,11): warning C4189: 'fish': local variable is initialized but not referenced
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(137,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(142,23): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(143,23): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(146,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(146,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(148,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(148,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(146,19): warning C4189: 'fish': local variable is initialized but not referenced
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(148,19): warning C4189: 'fish': local variable is initialized but not referenced
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(166,50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(166,41): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(185,49): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(185,46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(187,49): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(187,46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(166,11): warning C4189: 'midFish': local variable is initialized but not referenced
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(185,19): warning C4189: 'fish': local variable is initialized but not referenced
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(187,19): warning C4189: 'fish': local variable is initialized but not referenced
-D:\GitHub\AI Course\CppFlockingDemo\Boids\main.cpp(204,9): warning C4189: 'radius': local variable is initialized but not referenced
-  Generating Code...
-D:\GitHub\AI Course\CppFlockingDemo\Boids\Boid.cpp(271): warning C4702: unreachable code
+D:\GitHub\AI Course\CppFlockingDemo\Boids\Boid.cpp(215,54): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
+D:\GitHub\AI Course\CppFlockingDemo\Boids\Boid.cpp(231,54): warning C4244: 'argument': conversion from 'unsigned __int64' to 'const float', possible loss of data
+D:\GitHub\AI Course\CppFlockingDemo\Boids\Boid.cpp(288,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\AI Course\CppFlockingDemo\Boids\Boid.cpp(297): warning C4702: unreachable code
   Boids.vcxproj -> D:\GitHub\AI Course\CppFlockingDemo\x64\Debug\Boids.exe
