@@ -66,7 +66,10 @@ void Boid::update(float t, vecBoid* boidList)
 
 	//add lerp m_direction to desired dir
 	XMFLOAT3 vDirection = lerpFloat3(m_direction, vDesiredDirection, t);
+	//XMFLOAT3 vDirection = vDesiredDirection;
 	
+	float fSpeed = t * m_speed;
+	if (m_scale != 1) fSpeed *= 1.5f;
 	// set shark
 	if (m_scale != 1) {
 		//XMFLOAT3 vAgression = multiplyFloat3(vSeparation, -1.0f);
@@ -74,12 +77,12 @@ void Boid::update(float t, vecBoid* boidList)
 		//vVelocity = addFloat3(vVelocity, vCohesion);
 	}
 	
-	m_direction = addFloat3(m_direction, vDesiredDirection);
+	m_direction = addFloat3(m_direction, vDirection);
 	
 	if (magnitudeFloat3(m_direction) > 0.0f)
 	{
-		XMFLOAT3 vDirection = multiplyFloat3(m_direction, t * m_speed);
-		m_direction = normaliseFloat3(vDirection);
+		XMFLOAT3 vVelocity = multiplyFloat3(m_direction, fSpeed);
+		m_direction = normaliseFloat3(vVelocity);
 		m_position = addFloat3(m_position, m_direction);
 	}
 	else
@@ -121,7 +124,32 @@ XMFLOAT3 Boid::calculateFlockingVector(vecBoid* boidList) {
 
 XMFLOAT3 Boid::calculatePredatorVector(vecBoid* boidList) 
 {
-	return XMFLOAT3(0, 1, 0);
+	XMFLOAT3 vDesiredDirection = m_direction;
+
+	if (boidList == nullptr || boidList->size() == 0)
+		return vDesiredDirection;
+	
+	float nearestDistance = NEARBY_DISTANCE;// 9999.0f;
+	DrawableGameObject* nearest = nullptr;
+
+	for (Boid* boid : *boidList)
+	{
+		XMFLOAT3 directionOfNearest = subtractFloat3(*boid->getPosition(), m_position);
+		float distance = magnitudeFloat3(directionOfNearest);
+		if (distance < nearestDistance)
+		{
+			nearestDistance = distance;
+			nearest = boid;
+			vDesiredDirection = directionOfNearest;
+		}
+	}
+
+	//TODO: can't delete! must mark for deletion so that another process can remove this boid.
+	if (nearest != nullptr && nearestDistance <= 5.0f)
+		nearest->setPosition(XMFLOAT3(0,0,0));
+	
+	//return normaliseFloat3(vDesiredDirection);
+	return vDesiredDirection;
 }
 
 XMFLOAT3 Boid::calculateSeparationVector_Group(vecBoid* boidList)
@@ -181,7 +209,8 @@ XMFLOAT3 Boid::calculateSeparationVector_Nearest(vecBoid* boidList)
 	if (boidList == nullptr)
 		return nearby;
 
-	for (Boid* boid : *boidList) {
+	for (Boid* boid : *boidList) 
+	{
 		if (boid == this)
 			continue;
 
@@ -198,7 +227,8 @@ XMFLOAT3 Boid::calculateSeparationVector_Nearest(vecBoid* boidList)
 		}
 	}
 
-	if (nearest != nullptr) {
+	if (nearest != nullptr) 
+	{
 		directionNearestStored = normaliseFloat3(directionNearestStored);
 		if (nearestDistance < 10.0f)
 			directionNearestStored = multiplyFloat3(directionNearestStored, 10.0f - nearestDistance);
