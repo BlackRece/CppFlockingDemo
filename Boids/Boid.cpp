@@ -5,8 +5,10 @@
 Boid::Boid(XMFLOAT3 position)
 {
 	m_position = position;
-	m_direction = XMFLOAT3(0, 1, 0);
+	//m_direction = XMFLOAT3(0, 1, 0);
 	createRandomDirection();
+	if (isnan(m_direction.x))
+		m_direction = m_direction;
 
 	m_speed = 100;
 }
@@ -54,6 +56,7 @@ void Boid::setVelocityMultiplier(const float value)
 
 void Boid::update(float t, vecBoid* boidList)
 {
+
 	// create a list of nearby boids
 	vecBoid nearBoids = nearbyBoids(boidList);
 
@@ -73,7 +76,7 @@ void Boid::update(float t, vecBoid* boidList)
 	vVelocity = addFloat3(vVelocity, vSeparation);
 	vVelocity = addFloat3(vVelocity, vAlignment);
 	vVelocity = addFloat3(vVelocity, vCohesion);
-	
+	//TODO: cohesion is NAN!!!
 	//vVelocity = normaliseFloat3(vVelocity);
 	
 	//add lerp m_direction to desired dir
@@ -85,12 +88,16 @@ void Boid::update(float t, vecBoid* boidList)
 		//vVelocity = addFloat3(vVelocity, vCohesion);
 	}
 	
+	if (isnan(m_direction.x))
+		m_direction = m_direction;
 	m_direction = addFloat3(m_direction, vVelocity);
 	
 	if (magnitudeFloat3(m_direction) > 0.0f)
 	{
 		XMFLOAT3 vDirection = multiplyFloat3(m_direction, t * m_speed);
 		m_direction = normaliseFloat3(vDirection);
+		if (isnan(m_direction.x))
+			m_direction = m_direction;
 		m_position = addFloat3(m_position, m_direction);
 	}
 	else
@@ -112,19 +119,38 @@ XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float m
 XMFLOAT3 Boid::calculateSeparationVector_Group(vecBoid* boidList)
 {
 	// calculate average position of nearby
+	if (isnan(m_direction.x))
+		m_direction = m_direction;
 	
 	XMFLOAT3 vAverage = XMFLOAT3(0, 0, 0);
 	
 	if (boidList == nullptr || boidList->size() == 0)
 		return vAverage;
+
+	if (isnan(m_direction.x))
+		m_direction = m_direction;
 	
 	for (Boid* boid : *boidList) {
 		XMFLOAT3 mePos = m_position;
 		XMFLOAT3 itPos = *boid->getPosition();
+		if (isnan(m_direction.x))
+			m_direction = m_direction;
 
 		XMFLOAT3 directionNearest = subtractFloat3(itPos, mePos);
-		const float nearestDistanceSquared = dotProduct(directionNearest, directionNearest);
-	
+
+		if (magnitudeFloat3(m_direction) == 0)
+		{
+			m_direction = m_direction;
+		}
+//		const float nearestDistanceSquared = dotProduct(directionNearest, directionNearest);
+		const float nearestDistanceSquared = dotProduct(m_direction, directionNearest);
+	 
+		if (isnan(m_direction.x))
+			m_direction = m_direction;
+
+		if (isnan(nearestDistanceSquared))
+			mePos = mePos;
+
 		XMFLOAT3 boidDirection = divideFloat3(directionNearest, -nearestDistanceSquared);
 		vAverage = addFloat3(vAverage, boidDirection);
 	}
@@ -186,7 +212,7 @@ XMFLOAT3 Boid::calculateAlignmentVector(vecBoid* boidList)
 	for (Boid* boid : *boidList)
 		vDirection = addFloat3(vDirection, *boid->getDirection());
 
-	vDirection = divideFloat3(vDirection, boidList->size());
+	vDirection = divideFloat3(vDirection, boidCount);
 
 	return normaliseFloat3(vDirection); // return the normalised (average) direction of nearby drawables
 }
@@ -277,9 +303,10 @@ XMFLOAT3 Boid::normaliseFloat3(XMFLOAT3& f1)
 
 float Boid::dotProduct(XMFLOAT3& f1, XMFLOAT3& f2)
 {
-	XMFLOAT3 norm1 = normaliseFloat3(f1);
-	XMFLOAT3 norm2 = normaliseFloat3(f2);
-	return (norm1.x * norm2.x) + (norm1.y * norm2.y) + (norm1.z * norm2.z);
+	//XMFLOAT3 norm1 = normaliseFloat3(f1);
+	//XMFLOAT3 norm2 = normaliseFloat3(f2);
+	//return (norm1.x * norm2.x) + (norm1.y * norm2.y) + (norm1.z * norm2.z);
+	return (f1.x * f2.x) + (f1.y * f2.y) + (f1.z * f2.z);
 }
 
 vecBoid Boid::nearbyBoids(vecBoid* boidList)
