@@ -14,9 +14,9 @@
 //--------------------------------------------------------------------------------------
 #define _XM_NO_INTRINSICS_
 
-#define SEPERATION_MULTIPLIER	1.0f//12.0f
-#define ALIGNMENT_MULTPLIER		1.0f//8.0f
-#define COHESION_MULTIPLIER		1.0f//8.0f
+#define SEPERATION_MULTIPLIER	5.0f    //1.0f//12.0f
+#define ALIGNMENT_MULTPLIER		10.0f   //1.0f//8.0f
+#define COHESION_MULTIPLIER		5.0f    //1.0f//8.0f
 
 #define VELOCITY_MULTIPLIER		5.0f
 
@@ -26,6 +26,7 @@
 #include "Boid.h"
 
 #include "ImGui.h"
+#include <string>
 
 
 //--------------------------------------------------------------------------------------
@@ -772,14 +773,12 @@ void setupMaterialConstantBuffer(const unsigned int index)
 
 void setupTransformConstantBuffer(const unsigned int index)
 {
-	
 	ConstantBuffer cb1;
 	cb1.mWorld = XMMatrixTranspose(XMLoadFloat4x4(g_Boids[index]->getTransform()));
 	cb1.mView = XMMatrixTranspose(g_View);
 	cb1.mProjection = XMMatrixTranspose(g_Projection);
 	cb1.vOutputColor = XMFLOAT4(0, 0, 0, 0);
 	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb1, 0, 0);
-
 }
 
 //--------------------------------------------------------------------------------------
@@ -813,6 +812,8 @@ void Render()
 
     // Clear the depth buffer to 1.0 (max depth)
     g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
+
+    Boid::updateStats(t);
 
 	for(unsigned int i=0; i< g_Boids.size(); i++)
 	{ 
@@ -853,14 +854,12 @@ void Render()
     g_pSwapChain->Present( 0, 0 );
 }
 
-
 void OutputValue(float f, string name)
 {
 	char sz[1024] = { 0 };
 	sprintf_s(sz, "%s: %f\n", name.c_str(), f);
 	OutputDebugStringA(sz);
 }
-
 
 //--------------------------------------------------------------------------------------
 // ImGui Implementation Methods
@@ -924,6 +923,33 @@ void RenderImGui()
     ImGui::NewLine();
     ImGui::SliderFloat("Velocity Multiplier", &g_velocity, vMin, vMax);
     ImGui::InputFloat("Velocity:", &g_velocity, vMin, vMax, "%.4f");
+    ImGui::NewLine();
+
+    BoidData stats = Boid::getStats();
+    std::string msg =
+        "Time Elapsed: " +
+        std::to_string(stats.fTotalTime);
+    ImGui::Text(msg.c_str());
+    
+    msg =
+        "Captured: " +
+        std::to_string(stats.stats.size());
+    ImGui::Text(msg.c_str());
+
+    msg = 
+        "Average Bite Time: " +
+        std::to_string(stats.GetAverage());
+    ImGui::Text(msg.c_str());
+
+    for(int i = 0; i < stats.stats.size(); i++)
+    {
+        msg = 
+            std::to_string(i) +
+            ": " +
+            std::to_string(stats.stats[i]);
+        ImGui::Text(msg.c_str());
+    }
+
     ImGui::NewLine();
     ImGui::End();
 

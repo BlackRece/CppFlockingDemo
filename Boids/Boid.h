@@ -1,5 +1,36 @@
 #pragma once
 #include "DrawableGameObject.h"
+#include <vector>
+
+struct BoidData
+{
+	float fTimer;
+	float fTotalTime;
+	int iEaten;
+
+	std::vector<float> stats; 
+
+	void AddBoid() 
+	{
+		stats.push_back(fTimer); 
+		fTotalTime += fTimer;
+		fTimer = 0;
+	}
+
+	float GetAverage() 
+	{
+		if (stats.size() < 1)
+			return 0.0f;
+
+		float fTotal = 0;
+		for (float fInstance : stats)
+			fTotal += fInstance;
+
+		return fTotal / stats.size();
+	}
+
+	inline void Update(float delta) { fTimer += delta; }
+};
 
 class Boid :
 	public DrawableGameObject
@@ -7,6 +38,9 @@ class Boid :
 public:
 	Boid(XMFLOAT3 position);
 	~Boid();
+
+	static inline BoidData				getStats() { return m_stats; }
+	static inline void					updateStats(float delta) { m_stats.Update(delta); }
 
 	XMFLOAT3*							getDirection() { return &m_direction; }
 	void								checkIsOnScreenAndFix(const XMMATRIX&  view, const XMMATRIX&  proj);
@@ -55,5 +89,7 @@ private:
 	float								m_seperationMultiplier;
 	float								m_alignmentMultiplier;
 	float								m_cohesionMultiplier;
+
+	static BoidData						m_stats;
 };
 

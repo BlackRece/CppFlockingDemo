@@ -2,13 +2,16 @@
 
 #define NEARBY_DISTANCE			20.0f	// how far boids can see
 
+BoidData Boid::m_stats;
+
 Boid::Boid(XMFLOAT3 position)
 {
 	m_position = position;
 	//m_direction = XMFLOAT3(0, 1, 0);
 	createRandomDirection();
 	if (isnan(m_direction.x))
-		m_direction = m_direction;
+		m_direction = XMFLOAT3(0, 1, 0);
+		//m_direction = m_direction;
 
 	m_speed = 100;
 }
@@ -103,23 +106,30 @@ XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float m
 
 XMFLOAT3 Boid::calculateFlockingVector(vecBoid* boidList) {
 	// NOTE these functions should always return a normalised vector
-	XMFLOAT3  vSeparation = calculateSeparationVector_Group(boidList);
-	//XMFLOAT3  vSeparation = calculateSeparationVector_Nearest(boidList);
+	//XMFLOAT3  vSeparation = calculateSeparationVector_Group(boidList);
+	XMFLOAT3  vSeparation = calculateSeparationVector_Nearest(boidList);
 	XMFLOAT3  vAlignment = calculateAlignmentVector(boidList);
 	XMFLOAT3  vCohesion = calculateCohesionVector(boidList);
 
 	// set me
-	XMFLOAT3 vDesiredDirection = XMFLOAT3(0, 0, 0);
+	//XMFLOAT3 vDesiredDirection = XMFLOAT3(0, 0, 0);
+	//if (vDesiredDirection.x != 0)
+	//	vDesiredDirection.x = 0;
+	//if (vDesiredDirection.y != 0)
+	//	vDesiredDirection.y = 0;
+	//if (vDesiredDirection.z != 0)
+	//	vDesiredDirection.z = 0;
 
 	vSeparation = multiplyFloat3(vSeparation, m_seperationMultiplier);
 	vAlignment = multiplyFloat3(vAlignment, m_alignmentMultiplier);
 	vCohesion = multiplyFloat3(vCohesion, m_cohesionMultiplier);
 
-	vDesiredDirection = addFloat3(vDesiredDirection, vSeparation);
-	vDesiredDirection = addFloat3(vDesiredDirection, vAlignment);
-	vDesiredDirection = addFloat3(vDesiredDirection, vCohesion);
+	XMFLOAT3 vDirection = XMFLOAT3 (vSeparation);
+	//vDesiredDirection = addFloat3(vDesiredDirection, vSeparation);
+	vDirection = addFloat3(vDirection, vAlignment);
+	vDirection = addFloat3(vDirection, vCohesion);
 
-	return vDesiredDirection;
+	return vDirection;
 }
 
 XMFLOAT3 Boid::calculatePredatorVector(vecBoid* boidList) 
@@ -146,7 +156,10 @@ XMFLOAT3 Boid::calculatePredatorVector(vecBoid* boidList)
 
 	//TODO: can't delete! must mark for deletion so that another process can remove this boid.
 	if (nearest != nullptr && nearestDistance <= 5.0f)
+	{
 		nearest->setPosition(XMFLOAT3(0,0,0));
+		m_stats.AddBoid();
+	}
 	
 	//return normaliseFloat3(vDesiredDirection);
 	return vDesiredDirection;
@@ -209,12 +222,13 @@ XMFLOAT3 Boid::calculateSeparationVector_Nearest(vecBoid* boidList)
 	if (boidList == nullptr)
 		return nearby;
 
+	XMFLOAT3 mePos = m_position;
+
 	for (Boid* boid : *boidList) 
 	{
 		if (boid == this)
 			continue;
 
-		XMFLOAT3 mePos = m_position;
 		XMFLOAT3 itPos = *boid->getPosition();
 
 		XMFLOAT3 directionNearest = subtractFloat3(itPos, mePos);
